@@ -1,8 +1,8 @@
 #ifndef MARIO_H
 #define MARIO_H
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #define BIG_OR_SMALL_ENUM(x) \
 	DIRECTION_ENUM(x ## _BIG) \
@@ -30,7 +30,7 @@ typedef struct {
 } Animation;
 
 typedef struct {
-	SDL_Surface * image;
+	SDL_Texture * image;
 	Animation animation[NUMBER_OF_ANIMATION];
 	int currentAnimation;
 	int currentFrame;
@@ -41,11 +41,11 @@ typedef struct {
 	float speed;
 } Mario;
 
-void Mario_init(Mario * mario);
+void Mario_init(Mario * mario, SDL_Renderer *renderer);
 void Mario_move_left(Mario * mario, int move);
 void Mario_move_right(Mario * mario, int move);
 void Mario_update(Mario * mario, Uint32 timeElapsed);
-void Mario_draw(Mario * mario, SDL_Surface * surface, SDL_Rect offset);
+void Mario_draw(Mario * mario, SDL_Renderer *renderer, SDL_Rect offset);
 void Mario_clean(Mario * mario);
 
 #endif

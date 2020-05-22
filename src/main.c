@@ -1,27 +1,33 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "GameState.h"
 #include "MainState.h"
 #include "config.h"
 
-int main(int argc, char** argv)
+int main(int argc, char *args[])
 {
-	SDL_Surface * ecran = NULL;
+	SDL_Window *window;
+	SDL_Renderer *renderer;
+
 	Uint32 lastUpdate = 0, currentTime = 0, elapsedTime = 0;
 	
-	argc = argc;
-	argv = argv;
-	
 	SDL_Init(SDL_INIT_VIDEO);
-	ecran = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-	SDL_WM_SetCaption("Super Mario Bros.", NULL);
-	
+
+	window = SDL_CreateWindow("Super Mario Bros", 
+			SDL_WINDOWPOS_UNDEFINED,
+			SDL_WINDOWPOS_UNDEFINED,
+			SCREEN_W, SCREEN_H,
+			SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_RenderSetLogicalSize(renderer, SCREEN_W, SCREEN_H);
+
 	GS_Init();
 	
-	GS_PushState(MS_get());
+	GS_PushState(MS_get(), renderer);
 	
-	GS_handleEvent();
+	GS_handleEvent(renderer);
 	while(!GS_isEmpty())
 	{
 		currentTime = SDL_GetTicks();
@@ -31,15 +37,18 @@ int main(int argc, char** argv)
 			GS_update(elapsedTime);
 			lastUpdate = currentTime;
 		}
+	
+		SDL_RenderClear(renderer);	
+		GS_draw(renderer);
+		SDL_RenderPresent(renderer);
 		
-		GS_draw(ecran);
-		SDL_Flip(ecran);
-		
-		GS_handleEvent();
+		GS_handleEvent(renderer);
 	}
 	
 	GS_Clean();
 	
 	SDL_Quit();
+	IMG_Quit();
+
 	return 0;
 }

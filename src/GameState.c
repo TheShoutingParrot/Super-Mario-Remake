@@ -20,7 +20,7 @@ void GS_Clean()
 	}
 }
 
-void GS_PushState(state_t * state)
+void GS_PushState(state_t * state, SDL_Renderer *renderer)
 {
 	GS_Stack * newStack = malloc(sizeof(*newStack));
 	newStack->state = state;
@@ -28,7 +28,7 @@ void GS_PushState(state_t * state)
 	
 	head = newStack;
 	
-	state->init(state);
+	state->init(state, renderer);
 }
 
 void GS_PopState()
@@ -46,9 +46,9 @@ void GS_PopState()
 	}
 }
 
-void GS_handleEvent()
+void GS_handleEvent(SDL_Renderer *renderer)
 {
-	head->state->handleEvent(head->state);
+	head->state->handleEvent(head->state, renderer);
 }
 
 void GS_update(Uint32 elapsedTime)
@@ -56,9 +56,9 @@ void GS_update(Uint32 elapsedTime)
 	head->state->update(head->state, elapsedTime);
 }
 
-void GS_draw(SDL_Surface * surface)
+void GS_draw(SDL_Renderer *renderer)
 {
-	head->state->draw(head->state, surface);
+	head->state->draw(head->state, renderer);
 }
 
 int GS_isEmpty()
