@@ -1,3 +1,4 @@
+#include "main.h"
 #include "GameState.h"
 
 typedef struct _GS_Stack {
@@ -20,7 +21,7 @@ void GS_Clean()
 	}
 }
 
-void GS_PushState(state_t * state, SDL_Renderer *renderer)
+void GS_PushState(state_t * state)
 {
 	GS_Stack * newStack = malloc(sizeof(*newStack));
 	newStack->state = state;
@@ -28,7 +29,7 @@ void GS_PushState(state_t * state, SDL_Renderer *renderer)
 	
 	head = newStack;
 	
-	state->init(state, renderer);
+	state->init(state);
 }
 
 void GS_PopState()
@@ -46,9 +47,9 @@ void GS_PopState()
 	}
 }
 
-void GS_handleEvent(SDL_Renderer *renderer)
+void GS_handleEvent(void)
 {
-	head->state->handleEvent(head->state, renderer);
+	head->state->handleEvent(head->state);
 }
 
 void GS_update(Uint32 elapsedTime)
@@ -56,9 +57,9 @@ void GS_update(Uint32 elapsedTime)
 	head->state->update(head->state, elapsedTime);
 }
 
-void GS_draw(SDL_Renderer *renderer)
+void GS_draw(void)
 {
-	head->state->draw(head->state, renderer);
+	head->state->draw(head->state);
 }
 
 int GS_isEmpty()

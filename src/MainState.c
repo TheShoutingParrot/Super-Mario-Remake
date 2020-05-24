@@ -1,3 +1,4 @@
+#include "main.h"
 #include "MainState.h"
 #include "JeuState.h"
 
@@ -5,10 +6,10 @@ typedef struct {
 	SDL_Texture * image;
 } MS_t;
 
-void MS_init(state_t * s, SDL_Renderer *renderer);
+void MS_init(state_t * s);
 void MS_update(state_t * s, Uint32 elapsedTime);
-void MS_handleEvent(state_t * s, SDL_Renderer *renderer);
-void MS_draw(state_t * s, SDL_Renderer *renderer);
+void MS_handleEvent(state_t * s);
+void MS_draw(state_t * s);
 void MS_clean(state_t * s);
 
 state_t * MS_get()
@@ -24,13 +25,13 @@ state_t * MS_get()
 	return state;
 }
 
-void MS_init(state_t * s, SDL_Renderer *renderer)
+void MS_init(state_t * s)
 {
 	SDL_Surface *loadedSurface;
 	MS_t * data = malloc(sizeof(*data));
 
 	loadedSurface = IMG_Load("images/title.png");
-	data->image = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+	data->image = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
 	
 	s->data = data;
 }
@@ -41,8 +42,7 @@ void MS_update(state_t * s, Uint32 elapsedTime)
 	elapsedTime = elapsedTime;
 }
 
-void MS_handleEvent(state_t * s, SDL_Renderer *renderer)
-{
+void MS_handleEvent(state_t * s) {
 	SDL_Event event;
 	int continuer = 1;
 	
@@ -63,7 +63,7 @@ void MS_handleEvent(state_t * s, SDL_Renderer *renderer)
 						break;
 					case SDLK_RETURN:
 						GS_PopState();
-						GS_PushState(JS_get(), renderer);
+						GS_PushState(JS_get());
 						continuer = 0;
 						break;
 					default:
@@ -76,10 +76,10 @@ void MS_handleEvent(state_t * s, SDL_Renderer *renderer)
 	}
 }
 
-void MS_draw(state_t * s, SDL_Renderer * renderer)
+void MS_draw(state_t * s)
 {
 	MS_t * m = s->data;
-	SDL_RenderCopy(renderer, m->image, NULL, NULL);
+	SDL_RenderCopy(gRenderer, m->image, NULL, NULL);
 }
 
 void MS_clean(state_t * s)

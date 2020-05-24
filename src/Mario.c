@@ -1,12 +1,13 @@
+#include "main.h"
 #include "Mario.h"
 
-void Mario_init(Mario * mario, SDL_Renderer *renderer)
+void Mario_init(Mario * mario)
 {
 	SDL_Surface *loadedSurface;
 	SDL_Rect * frames = NULL;
 	
 	loadedSurface = IMG_Load("images/mario.png");
-	mario->image = SDL_CreateTextureFromSurface(renderer, loadedSurface); 
+	mario->image = SDL_CreateTextureFromSurface(gRenderer, loadedSurface); 
 	mario->currentAnimation = IDLE_SMALL_RIGHT;
 	mario->direction = RIGHT;
 	mario->is_moving = 0;
@@ -109,13 +110,13 @@ void Mario_update(Mario * mario, Uint32 timeElapsed)
 	}
 }
 
-void Mario_draw(Mario * mario, SDL_Renderer *renderer, SDL_Rect offset)
+void Mario_draw(Mario * mario, SDL_Rect offset)
 {
 	int cf = mario->currentFrame;
 	SDL_Rect tmp_pos = mario->position;
 	tmp_pos.x -= offset.x;
 	tmp_pos.y -= offset.y;
-	SDL_RenderCopy(renderer, mario->image, &tmp_pos, &(mario->animation[mario->currentAnimation].frames[cf]));
+	SDL_RenderCopy(gRenderer, mario->image, &tmp_pos, &(mario->animation[mario->currentAnimation].frames[cf]));
 }
 
 void Mario_clean(Mario * mario)

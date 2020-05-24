@@ -1,3 +1,4 @@
+#include "main.h"
 #include "JeuState.h"
 #include "Mario.h"
 #include "config.h"
@@ -9,10 +10,10 @@ typedef struct {
 	Mario * mario;
 } JS_t;
 
-void JS_init(state_t * s, SDL_Renderer *renderer);
+void JS_init(state_t * s);
 void JS_update(state_t * s, Uint32 elapsedTime);
-void JS_handleEvent(state_t * s, SDL_Renderer *renderer);
-void JS_draw(state_t * s, SDL_Renderer *renderer);
+void JS_handleEvent(state_t * s);
+void JS_draw(state_t * s);
 void JS_clean(state_t * s);
 
 state_t * JS_get()
@@ -35,14 +36,14 @@ void JS_update(state_t * s, Uint32 elapsedTime)
 	Mario_update(m->mario, elapsedTime);
 }
 
-void JS_init(state_t * s, SDL_Renderer *renderer)
+void JS_init(state_t * s)
 {
 	SDL_Surface *loadedSurface;
 	JS_t * data = malloc(sizeof(*data));
 
 
 	loadedSurface = IMG_Load("levels/1-1/view.png");
-	data->fond = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+	data->fond = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
 	data->pos.x = 0;
 	data->pos.y = 80;
 	data->pos.h = 144;
@@ -50,12 +51,12 @@ void JS_init(state_t * s, SDL_Renderer *renderer)
 	data->mario = malloc(sizeof(*(data->mario)));
 	data->ymax = 224;
 	
-	Mario_init(data->mario, renderer);
+	Mario_init(data->mario);
 	
 	s->data = data;
 }
 
-void JS_handleEvent(state_t * s, SDL_Renderer *renderer)
+void JS_handleEvent(state_t * s)
 {
 	SDL_Event event;
 	int continuer = 1;
@@ -135,11 +136,11 @@ void JS_handleEvent(state_t * s, SDL_Renderer *renderer)
 	}
 }
 
-void JS_draw(state_t * s, SDL_Renderer * renderer)
+void JS_draw(state_t * s)
 {
 	JS_t * m = s->data;
-	SDL_RenderCopy(renderer, m->fond, &(m->pos), NULL);
-	Mario_draw(m->mario, renderer, m->pos);
+	SDL_RenderCopy(gRenderer, m->fond, &(m->pos), NULL);
+	Mario_draw(m->mario, m->pos);
 }
 
 void JS_clean(state_t * s)

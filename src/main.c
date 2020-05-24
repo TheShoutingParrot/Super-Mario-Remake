@@ -1,48 +1,40 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
+#include "main.h"
 #include "GameState.h"
 #include "MainState.h"
 #include "config.h"
 
-int main(int argc, char *args[])
-{
-	SDL_Window *window;
-	SDL_Renderer *renderer;
+bool initGraphics(void);
+
+int main(int argc, char *args[]) {
 
 	Uint32 lastUpdate = 0, currentTime = 0, elapsedTime = 0;
 	
-	SDL_Init(SDL_INIT_VIDEO);
-
-	window = SDL_CreateWindow("Super Mario Bros", 
-			SDL_WINDOWPOS_UNDEFINED,
-			SDL_WINDOWPOS_UNDEFINED,
-			SCREEN_W, SCREEN_H,
-			SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_RenderSetLogicalSize(renderer, SCREEN_W, SCREEN_H);
+	if(!initGraphics())
+		return 1;
 
 	GS_Init();
 	
-	GS_PushState(MS_get(), renderer);
+	GS_PushState(MS_get());
 	
-	GS_handleEvent(renderer);
-	while(!GS_isEmpty())
-	{
+	GS_handleEvent();
+	while(!GS_isEmpty()) {
 		currentTime = SDL_GetTicks();
 		elapsedTime = currentTime - lastUpdate;
-		if(elapsedTime >= REFRESH_TIME)
+		if(elapsedTime >= GAME_REFRESH_TIME)
 		{
 			GS_update(elapsedTime);
 			lastUpdate = currentTime;
 		}
-	
-		SDL_RenderClear(renderer);	
-		GS_draw(renderer);
-		SDL_RenderPresent(renderer);
+
+		SDL_RenderClear(gRenderer);	
+		GS_draw();
+		SDL_RenderPresent(gRenderer);
 		
-		GS_handleEvent(renderer);
+		GS_handleEvent();
+
+		if((currentTime - SDL_GetTicks()) < FPS_TIME) {
+			SDL_Delay(FPS_TIME - (currentTime - SDL_GetTicks()));
+		}
 	}
 	
 	GS_Clean();
@@ -51,4 +43,33 @@ int main(int argc, char *args[])
 	IMG_Quit();
 
 	return 0;
+}
+
+bool initGraphics(void) {
+	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+		SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Failed to initialize SDL");
+		return false;
+	}
+
+	gWindow = SDL_CreateWindow("Super Mario Bros", 
+			SDL_WINDOWPOS_UNDEFINED,
+			SDL_WINDOWPOS_UNDEFINED,
+			SCREEN_W, SCREEN_H,
+			SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
+	if(gWindow == NULL) {
+		SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Failed to initialize window");
+		return false;
+	}
+
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+
+	if(gRenderer == NULL) {
+		SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Failed to initialize renderer");
+		return false;
+	}
+
+	SDL_RenderSetLogicalSize(gRenderer, SCREEN_W, SCREEN_H);
+
+	return true;
 }

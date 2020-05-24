@@ -41,11 +41,11 @@ typedef struct {
 	float speed;
 } Mario;
 
-void Mario_init(Mario * mario, SDL_Renderer *renderer);
+void Mario_init(Mario * mario);
 void Mario_move_left(Mario * mario, int move);
 void Mario_move_right(Mario * mario, int move);
 void Mario_update(Mario * mario, Uint32 timeElapsed);
-void Mario_draw(Mario * mario, SDL_Renderer *renderer, SDL_Rect offset);
+void Mario_draw(Mario * mario, SDL_Rect offset);
 void Mario_clean(Mario * mario);
 
 #endif
