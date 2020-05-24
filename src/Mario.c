@@ -8,6 +8,8 @@ void Mario_init(Mario * mario)
 	
 	loadedSurface = IMG_Load("images/mario.png");
 	mario->image = SDL_CreateTextureFromSurface(gRenderer, loadedSurface); 
+
+
 	mario->currentAnimation = IDLE_SMALL_RIGHT;
 	mario->direction = RIGHT;
 	mario->is_moving = 0;
@@ -15,6 +17,8 @@ void Mario_init(Mario * mario)
 	mario->currentFrame = 0;
 	mario->position.x = 0;
 	mario->position.y = 192;
+	mario->position.w = 16;
+	mario->position.h = 16;
 	
 	/* IDLE_SMALL_RIGHT */
 	frames = malloc(sizeof(*frames));
@@ -26,6 +30,10 @@ void Mario_init(Mario * mario)
 	mario->animation[IDLE_SMALL_RIGHT].countFrame = 1;
 	mario->animation[IDLE_SMALL_RIGHT].delay = 0;
 	
+	SDL_RenderCopy(gRenderer, mario->image, (mario->animation[IDLE_SMALL_RIGHT].frames), NULL);
+	SDL_RenderPresent(gRenderer);
+	SDL_Delay(1000);
+
 	/* WALKING_SMALL_RIGHT */
 	frames = malloc(sizeof(*frames) * 3);
 	frames[0].x = 241;
@@ -116,7 +124,9 @@ void Mario_draw(Mario * mario, SDL_Rect offset)
 	SDL_Rect tmp_pos = mario->position;
 	tmp_pos.x -= offset.x;
 	tmp_pos.y -= offset.y;
-	SDL_RenderCopy(gRenderer, mario->image, &tmp_pos, &(mario->animation[mario->currentAnimation].frames[cf]));
+	SDL_RenderCopy(gRenderer, mario->image, &(mario->animation[mario->currentAnimation].frames[cf]), &tmp_pos);
+
+	printf("%p %d %d\n", mario->image, tmp_pos.x, tmp_pos.w);
 }
 
 void Mario_clean(Mario * mario)

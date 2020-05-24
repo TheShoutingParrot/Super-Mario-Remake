@@ -140,6 +140,7 @@ void JS_draw(state_t * s)
 {
 	JS_t * m = s->data;
 	SDL_RenderCopy(gRenderer, m->fond, &(m->pos), NULL);
+
 	Mario_draw(m->mario, m->pos);
 }
 
